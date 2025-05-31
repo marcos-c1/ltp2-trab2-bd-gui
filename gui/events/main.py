@@ -1,37 +1,39 @@
-from gui.widgets.main import *
+from tkinter import PhotoImage
 from tkinter.ttk import Treeview
+
+from controller.cliente import ClienteController
+from controller.pedido import PedidoController
+from gui.widgets.main import *
+
 
 class EventoWidget:
 
-    # mock data 
+    # mock data
     nome = ['Rodrigo', 'Maria', 'Alex', 'Rafaela', 'Marcos', 'Henrique', 'Lisa', 'Ana', 'Carla']
     registro = ['428.651.170-73', '675.580.250-60', '675.580.250-60', '675.580.250-60', '675.580.250-60', '45.969.227/0001-88', '45.969.227/0001-88', '45.969.227/0001-88', '45.969.227/0001-88']
     cep = ['01001-000', '01001-000', '01001-000', '01001-000', '01001-000', '01001-000', '01001-000', '01001-000', '01001-000']
     uf = ['DF', 'MA', 'AP', 'AC', 'PA', 'MG', 'SP', 'RJ', 'PI']
 
-    def clienteSelecao(this, tabela: Treeview):
+    def clienteSelecao(self, tabela: Treeview):
         print(tabela.selection())
         for i in tabela.selection():
             print(tabela.item(i)['values'])
-          
-    def criarDado(this, tabela: Treeview):
-        for i in range(9):
-            nome = this.nome[i]
-            isEmpresa = 0
-            registro = this.registro[i]
-            cep = this.cep[i]
-            uf = this.uf[i]
-            data = (nome, isEmpresa, registro, cep, uf)
-            tabela.insert(parent = '', index = 0, values = data)
 
-    def alterarDado(this, tabela: Treeview):
+    def criarDado(self, tabela: Treeview, data: list):
+        editImg = PhotoImage(file="search.png")
+        if len(data) > 0:
+            for d in data:
+                tabela.insert('', "end", image=editImg, values = d)
+
+    def alterarDado(self, tabela: Treeview):
         print('altera dado na tabela e banco')
 
-    def removerDado(this, tabela: Treeview):
+    def removerDado(self, tabela: Treeview):
         for i in tabela.selection():
+            print(tabela.item(i)['values'][0])
             tabela.delete(i)
 
-	
+
 
 """
 tabelaCliente.bind('<<TreeviewSelect>>', item_select)

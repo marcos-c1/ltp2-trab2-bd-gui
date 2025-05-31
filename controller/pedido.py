@@ -1,9 +1,11 @@
 import sqlite3
+
 from config.db import Database
 from models.pedido import Pedido
 
+
 class PedidoController():
-    
+
     def criarPedido(self, p: Pedido, db: Database):
         try:
             with db.connect() as connection:
@@ -13,10 +15,24 @@ class PedidoController():
                 print("Não é possível inserir outro pedido do mesmo id!")
         except sqlite3.InternalError as e:
                 print(f"Algum erro interno no banco ocorreu: {e}")
-    
-    def listarPedidos(self, db: Database) -> list[any]:
+
+
+    def getPedido(self, id: int, db: Database) -> tuple:
+        pedido = []
+
+        try:
+            with db.connect() as connection:
+                c = connection.cursor()
+                pedido = c.execute("SELECT ID FROM pedidos WHERE id = ?", str(id)).fetchone()
+                print(pedido)
+        except sqlite3.Error as e:
+                print(f"Erro a nivel de banco: {e}")
+
+        return pedido
+
+    def listarPedidos(self, db: Database) -> tuple:
         pedidos = []
-        
+
         try:
             with db.connect() as connection:
                 c = connection.cursor()
@@ -26,7 +42,7 @@ class PedidoController():
                 print(f"Erro a nivel de banco: {e}")
 
         return pedidos
-    
+
     def atualizarPedido(self, p: Pedido,  db: Database):
         try:
             with db.connect() as connection:
@@ -34,19 +50,19 @@ class PedidoController():
                 pedido = c.execute("SELECT ID FROM pedidos WHERE id = ?", str(p.getId())).fetchone()
                 if pedido == None:
                      print("ID inexistente")
-                else: 
+                else:
                     c.execute("UPDATE pedidos SET produto = ?, precoProduto = ?, precoFrete = ? WHERE id = ?", (p.produto, p.precoProduto, p.precoFrete))
         except sqlite3.Error as e:
             print(f"Erro a nivel de banco: {e}")
-    
-    def deletarPedido(self, id: str, db: Database):
+
+    def deletarPedido(self, id: int, db: Database):
         try:
             with db.connect() as connection:
                 c = connection.cursor()
-                pedido = c.execute("SELECT ID FROM pedidos WHERE id = ?", id).fetchone()
+                pedido = c.execute("SELECT ID FROM pedidos WHERE id = ?", str(id)).fetchone()
                 if pedido == None:
                      print("ID inexistente")
                 else:
-                    c.execute("DELETE FROM pedidos WHERE id = ?", id)
+                    c.execute("DELETE FROM pedidos WHERE id = ?", str(id))
         except sqlite3.Error as e:
             print(f"Erro a nivel de banco: {e}")
